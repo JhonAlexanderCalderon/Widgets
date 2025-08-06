@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Calculadora de Tanque</title>
+    <title>Vat volume calculator</title>
     <style>
         body {
             font-family: sans-serif;
@@ -31,11 +31,11 @@
 </head>
 <body>
 
-    <h2>Calculadora de Nivel de Tanque</h2>
-    <p>Ingresa la distancia desde la parte superior del tanque (en cm).</p>
+    <h2>Vat volume calculator</h2>
+    <p>Enter the distance from the top (in cm).</p>
     
     <input type="number" id="distanciaSuperior" placeholder="Ej. 50">
-    <button onclick="calcularNivel()">Calcular</button>
+    <button onclick="calcularNivel()">Calculate</button>
 
     <div id="resultado"></div>
 
@@ -54,7 +54,7 @@
 
             const nivelAgua = alturaTotalTanque - parseFloat(distancia);
             
-            resultadoDiv.innerText = `El nivel de agua es de: ${nivelAgua} cm`;
+            resultadoDiv.innerText = `Liquid level is : ${nivelAgua} cm`;
             resultadoDiv.style.color = "green";
         }
     </script>
