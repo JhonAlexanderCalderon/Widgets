@@ -1,61 +1,150 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Vat volume calculator</title>
+    <title>Tank Level Calculator</title>
     <style>
         body {
             font-family: sans-serif;
             padding: 20px;
             text-align: center;
+            background-color: #f7f7f7;
+            color: #333;
         }
-        input {
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #1a1a1a;
+        }
+        p {
+            color: #666;
+        }
+        .options {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input[type="number"] {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             width: 150px;
+            text-align: center;
         }
         button {
-            padding: 8px 12px;
+            padding: 10px 15px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
         }
-        #resultado {
-            margin-top: 15px;
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
             font-size: 1.2em;
             font-weight: bold;
+            color: #28a745;
         }
     </style>
 </head>
 <body>
 
-    <h2>Vat volume calculator</h2>
-    <p>Enter the distance from the top (in cm).</p>
-    
-    <input type="number" id="distanciaSuperior" placeholder="Ej. 50">
-    <button onclick="calcularNivel()">Calculate</button>
+    <div class="container">
+        <h2>Tank Level Calculator</h2>
+        <p>Choose an option below to perform a calculation.</p>
+        
+        <div class="options">
+            <input type="radio" id="option1" name="calculation_type" value="volume_to_distance" checked onclick="toggleInput('volume_to_distance')">
+            <label for="option1">Volume to Top Distance</label>
 
-    <div id="resultado"></div>
+            <input type="radio" id="option2" name="calculation_type" value="distance_to_volume" onclick="toggleInput('distance_to_volume')">
+            <label for="option2">Top Distance to Volume</label>
+        </div>
+
+        <div class="input-group" id="volumeInput">
+            <p>Enter the Volume (X):</p>
+            <input type="number" id="volume" placeholder="e.g., 500">
+        </div>
+
+        <div class="input-group" id="distanceInput" style="display: none;">
+            <p>Enter the Top Distance (Y):</p>
+            <input type="number" id="distance" placeholder="e.g., 20">
+        </div>
+
+        <button onclick="calculate()">Calculate</button>
+
+        <div id="result"></div>
+    </div>
 
     <script>
-        function calcularNivel() {
-            const alturaTotalTanque = 200; // Puedes cambiar este valor
-            const distancia = document.getElementById("distanciaSuperior").value;
-            const resultadoDiv = document.getElementById("resultado");
+        const a = -0.0953;
+        const b = 121.91;
 
-            // Validar que el valor sea un número
-            if (isNaN(distancia) || distancia === "") {
-                resultadoDiv.innerText = "Por favor, ingresa un número válido.";
-                resultadoDiv.style.color = "red";
-                return;
-            }
-
-            const nivelAgua = alturaTotalTanque - parseFloat(distancia);
+        function toggleInput(type) {
+            const volumeInput = document.getElementById('volumeInput');
+            const distanceInput = document.getElementById('distanceInput');
             
-            resultadoDiv.innerText = `Liquid level is : ${nivelAgua} cm`;
-            resultadoDiv.style.color = "green";
+            if (type === 'volume_to_distance') {
+                volumeInput.style.display = 'block';
+                distanceInput.style.display = 'none';
+            } else {
+                volumeInput.style.display = 'none';
+                distanceInput.style.display = 'block';
+            }
+        }
+
+        function calculate() {
+            const calcType = document.querySelector('input[name="calculation_type"]:checked').value;
+            let resultDiv = document.getElementById('result');
+            let value;
+
+            // Clear previous result
+            resultDiv.innerText = '';
+
+            if (calcType === 'volume_to_distance') {
+                value = document.getElementById('volume').value;
+                if (value === "" || isNaN(value)) {
+                    resultDiv.innerText = "Please enter a valid volume.";
+                    resultDiv.style.color = "red";
+                    return;
+                }
+                
+                const distance = a * parseFloat(value) + b;
+                resultDiv.innerText = `The top distance (Y) is: ${distance.toFixed(2)}`;
+                resultDiv.style.color = "#28a745";
+
+            } else if (calcType === 'distance_to_volume') {
+                value = document.getElementById('distance').value;
+                if (value === "" || isNaN(value)) {
+                    resultDiv.innerText = "Please enter a valid top distance.";
+                    resultDiv.style.color = "red";
+                    return;
+                }
+
+                // Rearrange the formula: Y = aX + b  =>  X = (Y - b) / a
+                const volume = (parseFloat(value) - b) / a;
+                resultDiv.innerText = `The volume (X) is: ${volume.toFixed(2)}`;
+                resultDiv.style.color = "#28a745";
+            }
         }
     </script>
 
