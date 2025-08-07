@@ -3,34 +3,41 @@
 <head>
     <title>Vat D Level Calculator</title>
     <style>
+        /* CSS reset para una mejor integración con Notion */
         body {
             font-family: sans-serif;
-            padding: 40px 10px;
+            padding: 0;
+            margin: 0;
             text-align: center;
-            background-color: #f7f7f7;
+            background-color: transparent; /* Fondo transparente para integrarse con Notion */
             color: #333;
-            max-width: 400px;
-            margin: 40px auto;
-            border-radius: 8px;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         h2 {
+            font-size: 1.5em; /* Ajusta el tamaño del título */
+            margin: 0.5em 0;
             color: #1a1a1a;
         }
         p {
+            font-size: 1em; /* Ajusta el tamaño del texto */
+            margin: 0.5em 0;
             color: #666;
         }
         .options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 20px;
         }
         label {
-            display: block;
-            margin-bottom: 10px;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
         }
         input[type="radio"] {
-            margin-right: 5px;
+            margin: 0;
         }
         .input-group {
             margin-bottom: 15px;
@@ -69,11 +76,14 @@
     <p>Choose an option below to perform a calculation.</p>
     
     <div class="options">
-        <input type="radio" id="option1" name="calculation_type" value="volume_to_distance" checked onclick="toggleInput('volume_to_distance')">
-        <label for="option1">Enter Volume to get Top Distance</label>
-
-        <input type="radio" id="option2" name="calculation_type" value="distance_to_volume" onclick="toggleInput('distance_to_volume')">
-        <label for="option2">Enter Top distance to get Volume</label>
+        <label for="option1">
+            <input type="radio" id="option1" name="calculation_type" value="volume_to_distance" checked onclick="toggleInput('volume_to_distance')">
+            Enter Volume to get Top Distance
+        </label>
+        <label for="option2">
+            <input type="radio" id="option2" name="calculation_type" value="distance_to_volume" onclick="toggleInput('distance_to_volume')">
+            Enter Top distance to get Volume
+        </label>
     </div>
 
     <div class="input-group" id="volumeInput">
