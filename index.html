@@ -5,17 +5,14 @@
     <style>
         body {
             font-family: sans-serif;
-            padding: 20px;
+            padding: 40px 10px;
             text-align: center;
             background-color: #f7f7f7;
             color: #333;
-        }
-        .container {
             max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
+            margin: 40px auto;
             border-radius: 8px;
+            background: #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         h2 {
@@ -68,32 +65,30 @@
 </head>
 <body>
 
-    <div class="container">
-        <h2>Vat D Level Calculator</h2>
-        <p>Choose an option below to perform a calculation.</p>
-        
-        <div class="options">
-            <input type="radio" id="option1" name="calculation_type" value="volume_to_distance" checked onclick="toggleInput('volume_to_distance')">
-            <label for="option1">Enter Volume to get Top Distance</label>
+    <h2>Vat D Level Calculator</h2>
+    <p>Choose an option below to perform a calculation.</p>
+    
+    <div class="options">
+        <input type="radio" id="option1" name="calculation_type" value="volume_to_distance" checked onclick="toggleInput('volume_to_distance')">
+        <label for="option1">Enter Volume to get Top Distance</label>
 
-            <input type="radio" id="option2" name="calculation_type" value="distance_to_volume" onclick="toggleInput('distance_to_volume')">
-            <label for="option2">Enter Top distance to get Volume</label>
-        </div>
-
-        <div class="input-group" id="volumeInput">
-            <p>Enter the Volume:</p>
-            <input type="number" id="volume" placeholder="e.g., 500">
-        </div>
-
-        <div class="input-group" id="distanceInput" style="display: none;">
-            <p>Enter the Top Distance:</p>
-            <input type="number" id="distance" placeholder="e.g., 20">
-        </div>
-
-        <button onclick="calculate()">Calculate</button>
-
-        <div id="result"></div>
+        <input type="radio" id="option2" name="calculation_type" value="distance_to_volume" onclick="toggleInput('distance_to_volume')">
+        <label for="option2">Enter Top distance to get Volume</label>
     </div>
+
+    <div class="input-group" id="volumeInput">
+        <p>Enter the Volume:</p>
+        <input type="number" id="volume" placeholder="e.g., 500">
+    </div>
+
+    <div class="input-group" id="distanceInput" style="display: none;">
+        <p>Enter the Top Distance:</p>
+        <input type="number" id="distance" placeholder="e.g., 20">
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="result"></div>
 
     <script>
         const a = -0.0953;
