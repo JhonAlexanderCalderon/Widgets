@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora para Tanque de Calentamiento</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .calculator-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Calculadora para Tanque de 1000L</h1>
+
+    <div class="calculator-section">
+        <h2>1. Calcular Volumen desde Distancia</h2>
+        <label for="inputDistancia">Introduce la distancia (cm desde arriba):</label>
+        <input type="number" id="inputDistancia" placeholder="Ej: 72">
+        <button onclick="uiCalcularVolumen()">Calcular Volumen</button>
+        <p class="result" id="resultadoVolumen"></p>
+    </div>
+
+    <div class="calculator-section">
+        <h2>2. Calcular Distancia desde Volumen</h2>
+        <label for="inputVolumen">Introduce el volumen (Litros):</label>
+        <input type="number" id="inputVolumen" placeholder="Ej: 384">
+        <button onclick="uiCalcularDistancia()">Calcular Distancia</button>
+        <p class="result" id="resultadoDistancia"></p>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS DEL TANQUE ---
+        // Aquí almacenamos los datos de tu tabla.
+        // h = altura en cm desde arriba, v = volumen en Litros.
+        const datosTanque = [
+            { h: 98.5, v: 100 },
+            { h: 92.8, v: 150 },
+            { h: 89.0, v: 200 },
+            { h: 85.0, v: 250 },
+            { h: 79.7, v: 300 },
+            { h: 75.3, v: 350 },
+            { h: 70.5, v: 400 },
+            { h: 66.2, v: 450 },
+            { h: 61.4, v: 500 },
+            { h: 57.0, v: 550 },
+            { h: 52.2, v: 600 },
+            { h: 47.5, v: 650 },
+            { h: 43.3, v: 700 },
+            { h: 37.8, v: 750 },
+            { h: 34.1, v: 800 },
+            { h: 29.9, v: 850 },
+            { h: 25.3, v: 900 },
+            { h: 20.7, v: 950 },
+            { h: 16.2, v: 1000 }
+        ];
+
+        // --- LÓGICA DE CÁLCULO ---
+
+        /**
+         * Calcula el VOLUMEN a partir de una distancia dada usando interpolación lineal.
+         * @param {number} h_actual - La distancia en cm medida desde arriba.
+         * @returns {number|null} El volumen calculado o null si hay un error.
+         */
+        function calcularVolumenDesdeDistancia(h_actual) {
+            // Caso 1: La medida está por encima del valor más alto (casi vacío).
+            if (h_actual >= datosTanque[0].h) return datosTanque[0].v;
+            // Caso 2: La medida está por debajo del valor más bajo (lleno).
+            if (h_actual <= datosTanque[datosTanque.length - 1].h) return datosTanque[datosTanque.length - 1].v;
+
+            // Buscar los dos puntos entre los que se encuentra la medida
+            for (let i = 0; i < datosTanque.length - 1; i++) {
+                const p1 = datosTanque[i];     // Punto superior
+                const p2 = datosTanque[i+1];   // Punto inferior
+
+                if (h_actual <= p1.h && h_actual > p2.h) {
+                    // Hemos encontrado los puntos. Ahora aplicamos la fórmula de interpolación.
+                    // V = V1 + ((h - h1) / (h2 - h1)) * (V2 - V1)
+                    const v_calculado = p1.v + ((h_actual - p1.h) / (p2.h - p1.h)) * (p2.v - p1.v);
+                    return v_calculado;
+                }
+            }
+            return null; // No debería ocurrir si los datos son correctos
+        }
+
+        /**
+         * Calcula la DISTANCIA a partir de un volumen dado usando interpolación lineal.
+         * @param {number} v_actual - El volumen en Litros.
+         * @returns {number|null} La distancia calculada o null si hay un error.
+         */
+        function calcularDistanciaDesdeVolumen(v_actual) {
+            // Caso 1: El volumen es menor o igual al mínimo.
+            if (v_actual <= datosTanque[0].v) return datosTanque[0].h;
+            // Caso 2: El volumen es mayor o igual al máximo.
+            if (v_actual >= datosTanque[datosTanque.length - 1].v) return datosTanque[datosTanque.length - 1].h;
+
+            // Buscar los dos puntos entre los que se encuentra el volumen
+            for (let i = 0; i < datosTanque.length - 1; i++) {
+                const p1 = datosTanque[i];
+                const p2 = datosTanque[i+1];
+
+                if (v_actual >= p1.v && v_actual < p2.v) {
+                    // Fórmula de interpolación para la altura
+                    // h = h1 + ((V - V1) / (V2 - V1)) * (h2 - h1)
+                    const h_calculada = p1.h + ((v_actual - p1.v) / (p2.v - p1.v)) * (p2.h - p1.h);
+                    return h_calculada;
+                }
+            }
+             return null;
+        }
+
+
+        // --- FUNCIONES DE LA INTERFAZ DE USUARIO (UI) ---
+
+        function uiCalcularVolumen() {
+            const inputEl = document.getElementById('inputDistancia');
+            const resultadoEl = document.getElementById('resultadoVolumen');
+            const distancia = parseFloat(inputEl.value);
+
+            if (isNaN(distancia)) {
+                resultadoEl.textContent = "Por favor, introduce un número válido.";
+                resultadoEl.style.color = 'red';
+                return;
+            }
+
+            const volumen = calcularVolumenDesdeDistancia(distancia);
+            resultadoEl.textContent = `Volumen: ${volumen.toFixed(2)} Litros`;
+            resultadoEl.style.color = '#28a745';
+        }
+
+        function uiCalcularDistancia() {
+            const inputEl = document.getElementById('inputVolumen');
+            const resultadoEl = document.getElementById('resultadoDistancia');
+            const volumen = parseFloat(inputEl.value);
+
+            if (isNaN(volumen)) {
+                resultadoEl.textContent = "Por favor, introduce un número válido.";
+                resultadoEl.style.color = 'red';
+                return;
+            }
+            
+            const distancia = calcularDistanciaDesdeVolumen(volumen);
+            resultadoEl.textContent = `Distancia: ${distancia.toFixed(2)} cm desde arriba`;
+            resultadoEl.style.color = '#28a745';
+        }
+    </script>
+
+</body>
+</html>
