@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1000L heating Vat Calculator</title>
+    <title>Vat Calculator</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
         
@@ -14,20 +14,17 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        /* Set a white background and center the content for standalone viewing */
         body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: #4A98F7;
+            background: #fff;
+            padding-top: 40px; /* Add some space at the top */
         }
 
-        .container {
-            width: 400px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+        /* The main calculator wrapper, now without a border or shadow */
+        .calculator {
+            max-width: 450px; /* Constrain width to keep it neat */
+            margin: 0 auto; /* Center the calculator horizontally */
+            padding: 20px;
         }
 
         h1 {
@@ -36,10 +33,6 @@
             text-align: center;
             margin-bottom: 25px;
             color: #333;
-        }
-
-        .calculator {
-            width: 100%;
         }
         
         .mode-selection {
@@ -107,28 +100,26 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>1000L heating Vat Calculator</h1>
-        <div class="calculator">
-            <form id="vatForm">
-                <div class="mode-selection">
-                    <label>
-                        <input type="radio" name="calculationMode" value="toVolume" checked onchange="updateInputLabel()">
-                        Height to Volume
-                    </label>
-                    <label>
-                        <input type="radio" name="calculationMode" value="toHeight" onchange="updateInputLabel()">
-                        Volume to Height
-                    </label>
-                </div>
-                <div class="input-group">
-                    <label for="inputValue" id="inputLabel">Enter Height (cm from top):</label>
-                    <input type="number" id="inputValue" step="any" placeholder="e.g., 72" required>
-                </div>
-                <button type="submit">Calculate</button>
-            </form>
-            <div id="result"></div>
-        </div>
+    <div class="calculator">
+        <h1>Vat Calculator</h1>
+        <form id="vatForm">
+            <div class="mode-selection">
+                <label>
+                    <input type="radio" name="calculationMode" value="toVolume" checked onchange="updateInputLabel()">
+                    Height to Volume
+                </label>
+                <label>
+                    <input type="radio" name="calculationMode" value="toHeight" onchange="updateInputLabel()">
+                    Volume to Height
+                </label>
+            </div>
+            <div class="input-group">
+                <label for="inputValue" id="inputLabel">Enter Height (cm from top):</label>
+                <input type="number" id="inputValue" step="any" placeholder="e.g., 72" required>
+            </div>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result"></div>
     </div>
 
     <script>
@@ -162,7 +153,7 @@
 
         function calculateHeightFromVolume(currentVolume) {
             if (currentVolume <= tankData[0].v) return tankData[0].h;
-            if (currentVolume >= tankData[tankData.length - 1].v) return tankData[tankData.length - 1].h;
+            if (currentVolume >= tankData[tankData.length - 1].v) return tankData[tankData.length - 1].v;
 
             for (let i = 0; i < tankData.length - 1; i++) {
                 const p1 = tankData[i];
