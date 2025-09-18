@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vat D Level Calculator</title>
+    <style>
+        /* CSS reset para una mejor integración con Notion */
+        body {
+            font-family: sans-serif;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            background-color: transparent; /* Fondo transparente para integrarse con Notion */
+            color: #333;
+        }
+        h2 {
+            font-size: 1.5em; /* Ajusta el tamaño del título */
+            margin: 0.5em 0;
+            color: #1a1a1a;
+        }
+        p {
+            font-size: 1em; /* Ajusta el tamaño del texto */
+            margin: 0.5em 0;
+            color: #666;
+        }
+        .options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        input[type="radio"] {
+            margin: 0;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 150px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Vat D Level Calculator</h2>
+    <p>Choose an option below to perform a calculation.</p>
+    
+    <div class="options">
+        <label for="option1">
+            <input type="radio" id="option1" name="calculation_type" value="volume_to_distance" checked onclick="toggleInput('volume_to_distance')">
+            Enter Volume to get Top Distance
+        </label>
+        <label for="option2">
+            <input type="radio" id="option2" name="calculation_type" value="distance_to_volume" onclick="toggleInput('distance_to_volume')">
+            Enter Top distance to get Volume
+        </label>
+    </div>
+
+    <div class="input-group" id="volumeInput">
+        <p>Enter the Volume:</p>
+        <input type="number" id="volume" placeholder="e.g., 500">
+    </div>
+
+    <div class="input-group" id="distanceInput" style="display: none;">
+        <p>Enter the Top Distance:</p>
+        <input type="number" id="distance" placeholder="e.g., 20">
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="result"></div>
+
+    <script>
+        const a = -0.0953;
+        const b = 121.91;
+
+        function toggleInput(type) {
+            const volumeInput = document.getElementById('volumeInput');
+            const distanceInput = document.getElementById('distanceInput');
+            
+            if (type === 'volume_to_distance') {
+                volumeInput.style.display = 'block';
+                distanceInput.style.display = 'none';
+            } else {
+                volumeInput.style.display = 'none';
+                distanceInput.style.display = 'block';
+            }
+        }
+
+        function calculate() {
+            const calcType = document.querySelector('input[name="calculation_type"]:checked').value;
+            let resultDiv = document.getElementById('result');
+            let value;
+
+            // Clear previous result
+            resultDiv.innerText = '';
+
+            if (calcType === 'volume_to_distance') {
+                value = document.getElementById('volume').value;
+                if (value === "" || isNaN(value)) {
+                    resultDiv.innerText = "Please enter a valid volume.";
+                    resultDiv.style.color = "red";
+                    return;
+                }
+                
+                const distance = a * parseFloat(value) + b;
+                resultDiv.innerText = `The top distance is: ${distance.toFixed(2)}`;
+                resultDiv.style.color = "#28a745";
+
+            } else if (calcType === 'distance_to_volume') {
+                value = document.getElementById('distance').value;
+                if (value === "" || isNaN(value)) {
+                    resultDiv.innerText = "Please enter a valid top distance.";
+                    resultDiv.style.color = "red";
+                    return;
+                }
+
+                // Rearrange the formula: Y = aX + b  =>  X = (Y - b) / a
+                const volume = (parseFloat(value) - b) / a;
+                resultDiv.innerText = `The volume is: ${volume.toFixed(2)}`;
+                resultDiv.style.color = "#28a745";
+            }
+        }
+    </script>
+
+</body>
+</html>
