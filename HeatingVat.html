@@ -3,128 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vat Calculator</title>
+    <title>Production Level Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+        :root {
+            --bg: #0e1117;
+            --surface: #161b22;
+            --surface-hover: #1c2230;
+            --border: #2a3140;
+            --border-focus: #3b82f6;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #545d68;
+            --accent-blue: #3b82f6;
+            --accent-blue-dim: rgba(59,130,246,0.12);
+            --accent-green: #22c55e;
+            --accent-green-dim: rgba(34,197,94,0.12);
+            --accent-amber: #f59e0b;
+            --accent-amber-dim: rgba(245,158,11,0.12);
+            --radius: 10px;
+            --radius-sm: 6px;
         }
 
-        /* Set a white background and center the content for standalone viewing */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: #fff;
-            padding-top: 40px; /* Add some space at the top */
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 32px 16px;
         }
 
-        /* The main calculator wrapper, now without a border or shadow */
-        .calculator {
-            max-width: 450px; /* Constrain width to keep it neat */
-            margin: 0 auto; /* Center the calculator horizontally */
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
-        
-        .mode-selection {
+        /* ── Header ── */
+        .page-header {
+            max-width: 880px;
+            margin: 0 auto 36px;
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 14px;
         }
-
-        .mode-selection label {
-            cursor: pointer;
-            font-size: 14px;
+        .page-header .icon-badge {
+            width: 42px; height: 42px;
+            background: var(--accent-blue-dim);
+            border: 1px solid rgba(59,130,246,0.25);
+            border-radius: var(--radius);
+            display: grid; place-items: center;
+            flex-shrink: 0;
         }
-
-        .input-group {
-            margin-bottom: 20px;
+        .page-header .icon-badge svg { width: 22px; height: 22px; stroke: var(--accent-blue); }
+        .page-header h1 {
+            font-size: 22px; font-weight: 700;
+            letter-spacing: -0.3px;
         }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 15px;
-            color: #555;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-            outline: none;
-        }
-        
-        .input-group input:focus {
-            border-color: #4A98F7;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
+        .page-header span {
+            font-size: 13px; color: var(--text-muted);
             font-weight: 500;
-            transition: background-color 0.3s ease;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-left: auto;
+            white-space: nowrap;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        /* ── Grid ── */
+        .grid {
+            max-width: 880px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 720px) {
+            .grid { grid-template-columns: 1fr; }
         }
 
-        #result {
-            margin-top: 25px;
-            text-align: center;
+        /* ── Card ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .card-label .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .card-title {
             font-size: 18px;
-            font-weight: 500;
-            color: #333;
-            min-height: 25px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.2px;
+        }
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 22px;
+            line-height: 1.5;
         }
 
+        /* ── Mode Toggle ── */
+        .mode-toggle {
+            display: flex;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .mode-toggle input[type="radio"] { display: none; }
+        .mode-toggle label {
+            flex: 1;
+            text-align: center;
+            padding: 9px 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 5px;
+            transition: color 0.2s, background 0.2s;
+            position: relative;
+            z-index: 1;
+            user-select: none;
+        }
+        .mode-toggle input[type="radio"]:checked + label {
+            color: var(--text-primary);
+            background: var(--surface-hover);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* ── Input ── */
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .input-wrap {
+            position: relative;
+            margin-bottom: 18px;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 12px 14px;
+            padding-right: 50px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-wrap input::placeholder {
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 13px;
+        }
+        .input-wrap input:focus { border-color: var(--border-focus); }
+        .input-unit {
+            position: absolute;
+            right: 14px;
+            top: 50%; transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* ── Button ── */
+        .calc-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.08s;
+            color: #fff;
+            letter-spacing: 0.2px;
+        }
+        .calc-btn:hover { filter: brightness(1.12); }
+        .calc-btn:active { transform: scale(0.985); }
+        .calc-btn.blue { background: var(--accent-blue); }
+        .calc-btn.green { background: var(--accent-green); }
+
+        /* ── Result ── */
+        .result-box {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            min-height: 56px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.25s;
+        }
+        .result-box.empty {
+            background: transparent;
+            border: 1px dashed var(--border);
+        }
+        .result-box.filled.blue {
+            background: var(--accent-blue-dim);
+            border: 1px solid rgba(59,130,246,0.2);
+        }
+        .result-box.filled.green {
+            background: var(--accent-green-dim);
+            border: 1px solid rgba(34,197,94,0.2);
+        }
+        .result-box.error {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        .result-value.blue { color: var(--accent-blue); }
+        .result-value.green { color: var(--accent-green); }
+        .result-value.error-text { color: #ef4444; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+        .result-unit {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .result-box.empty .placeholder-text {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
 
-    <div class="calculator">
-        <h1>1000L heating Vat Calculator</h1>
-        <form id="vatForm">
-            <div class="mode-selection">
-                <label>
-                    <input type="radio" name="calculationMode" value="toVolume" checked onchange="updateInputLabel()">
-                    Height to Volume
-                </label>
-                <label>
-                    <input type="radio" name="calculationMode" value="toHeight" onchange="updateInputLabel()">
-                    Volume to Height
-                </label>
+    <!-- Header -->
+    <div class="page-header">
+        <div class="icon-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714a2.25 2.25 0 0 0 .659 1.591L19 14.5m-4.75-11.396c.251.023.501.05.75.082M12 3v5.714" />
+            </svg>
+        </div>
+        <h1>Vat Level Tools</h1>
+        <span>Line 2 · Cold Fill</span>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid">
+
+        <!-- CARD 1: 1000L Heating Vat -->
+        <div class="card">
+            <div class="card-label"><span class="dot" style="background:var(--accent-blue)"></span> Tank A</div>
+            <div class="card-title">1000L Heating Vat</div>
+            <div class="card-desc">Lookup table interpolation · Height ↔ Volume</div>
+
+            <div class="mode-toggle">
+                <input type="radio" name="modeA" id="modeA_hv" value="hToV" checked>
+                <label for="modeA_hv">Height → Volume</label>
+                <input type="radio" name="modeA" id="modeA_vh" value="vToH">
+                <label for="modeA_vh">Volume → Height</label>
             </div>
-            <div class="input-group">
-                <label for="inputValue" id="inputLabel">Enter Height (cm from top):</label>
-                <input type="number" id="inputValue" step="any" placeholder="e.g., 72" required>
+
+            <label class="field-label" id="labelA">Height from top</label>
+            <div class="input-wrap">
+                <input type="number" id="inputA" step="any" placeholder="Enter value">
+                <span class="input-unit" id="unitA">cm</span>
             </div>
-            <button type="submit">Calculate</button>
-        </form>
-        <div id="result"></div>
+
+            <button class="calc-btn blue" onclick="calcA()">Calculate</button>
+
+            <div class="result-box empty" id="resultA">
+                <span class="placeholder-text">Result will appear here</span>
+            </div>
+        </div>
+
+        <!-- CARD 2: Vat D -->
+        <div class="card">
+            <div class="card-label"><span class="dot" style="background:var(--accent-green)"></span> Tank D</div>
+            <div class="card-title">Vat D Level</div>
+            <div class="card-desc">Linear model · Volume ↔ Top Distance</div>
+
+            <div class="mode-toggle">
+                <input type="radio" name="modeD" id="modeD_vd" value="vToD" checked>
+                <label for="modeD_vd">Volume → Distance</label>
+                <input type="radio" name="modeD" id="modeD_dv" value="dToV">
+                <label for="modeD_dv">Distance → Volume</label>
+            </div>
+
+            <label class="field-label" id="labelD">Volume</label>
+            <div class="input-wrap">
+                <input type="number" id="inputD" step="any" placeholder="Enter value">
+                <span class="input-unit" id="unitD">L</span>
+            </div>
+
+            <button class="calc-btn green" onclick="calcD()">Calculate</button>
+
+            <div class="result-box empty" id="resultD">
+                <span class="placeholder-text">Result will appear here</span>
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- TANK DATA TABLE ---
-        // h = height in cm from top, v = volume in Liters.
+        // ═══════════════════════════════════════
+        // TANK A — 1000L Heating Vat (lookup)
+        // ═══════════════════════════════════════
         const tankData = [
             { h: 98.5, v: 100 }, { h: 92.8, v: 150 }, { h: 89.0, v: 200 },
             { h: 85.0, v: 250 }, { h: 79.7, v: 300 }, { h: 75.3, v: 350 },
@@ -135,85 +349,111 @@
             { h: 16.2, v: 1000 }
         ];
 
-        // --- CORE CALCULATION LOGIC ---
-
-        function calculateVolumeFromHeight(currentHeight) {
-            if (currentHeight >= tankData[0].h) return tankData[0].v;
-            if (currentHeight <= tankData[tankData.length - 1].h) return tankData[tankData.length - 1].v;
-
+        function volFromHeight(h) {
+            if (h >= tankData[0].h) return tankData[0].v;
+            if (h <= tankData[tankData.length - 1].h) return tankData[tankData.length - 1].v;
             for (let i = 0; i < tankData.length - 1; i++) {
-                const p1 = tankData[i];
-                const p2 = tankData[i + 1];
-                if (currentHeight <= p1.h && currentHeight > p2.h) {
-                    return p1.v + ((currentHeight - p1.h) / (p2.h - p1.h)) * (p2.v - p1.v);
-                }
+                const p1 = tankData[i], p2 = tankData[i + 1];
+                if (h <= p1.h && h > p2.h)
+                    return p1.v + ((h - p1.h) / (p2.h - p1.h)) * (p2.v - p1.v);
             }
             return null;
         }
 
-        function calculateHeightFromVolume(currentVolume) {
-            if (currentVolume <= tankData[0].v) return tankData[0].h;
-            if (currentVolume >= tankData[tankData.length - 1].v) return tankData[tankData.length - 1].v;
-
+        function heightFromVol(v) {
+            if (v <= tankData[0].v) return tankData[0].h;
+            if (v >= tankData[tankData.length - 1].v) return tankData[tankData.length - 1].h;
             for (let i = 0; i < tankData.length - 1; i++) {
-                const p1 = tankData[i];
-                const p2 = tankData[i + 1];
-                if (currentVolume >= p1.v && currentVolume < p2.v) {
-                    return p1.h + ((currentVolume - p1.v) / (p2.v - p1.v)) * (p2.h - p1.h);
-                }
+                const p1 = tankData[i], p2 = tankData[i + 1];
+                if (v >= p1.v && v < p2.v)
+                    return p1.h + ((v - p1.v) / (p2.v - p1.v)) * (p2.h - p1.h);
             }
             return null;
         }
 
-        // --- UI AND EVENT HANDLING ---
-
-        const form = document.getElementById('vatForm');
-        const inputLabel = document.getElementById('inputLabel');
-        const inputValue = document.getElementById('inputValue');
-        const resultDiv = document.getElementById('result');
-
-        function updateInputLabel() {
-            const selectedMode = document.querySelector('input[name="calculationMode"]:checked').value;
-            if (selectedMode === 'toVolume') {
-                inputLabel.textContent = 'Enter Height (cm from top):';
-                inputValue.placeholder = 'e.g., 72';
-            } else {
-                inputLabel.textContent = 'Enter Volume (Liters):';
-                inputValue.placeholder = 'e.g., 384';
-            }
-             inputValue.value = ''; // Clear input on mode change
-             resultDiv.textContent = ''; // Clear result on mode change
-        }
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent page reload
-            const value = parseFloat(inputValue.value);
-            if (isNaN(value)) {
-                resultDiv.textContent = 'Please enter a valid number.';
-                resultDiv.style.color = 'red';
-                return;
-            }
-
-            const selectedMode = document.querySelector('input[name="calculationMode"]:checked').value;
-            let result;
-            let resultText = '';
-            
-            resultDiv.style.color = '#333'; // Reset color
-
-            if (selectedMode === 'toVolume') {
-                result = calculateVolumeFromHeight(value);
-                resultText = `Result: ${result.toFixed(2)} Liters`;
-            } else {
-                result = calculateHeightFromVolume(value);
-                resultText = `Result: ${result.toFixed(2)} cm from top`;
-            }
-
-            resultDiv.textContent = resultText;
+        // Mode toggle listeners — Tank A
+        document.querySelectorAll('input[name="modeA"]').forEach(r => {
+            r.addEventListener('change', () => {
+                const isHtoV = r.value === 'hToV';
+                document.getElementById('labelA').textContent = isHtoV ? 'Height from top' : 'Volume';
+                document.getElementById('unitA').textContent = isHtoV ? 'cm' : 'L';
+                document.getElementById('inputA').value = '';
+                document.getElementById('inputA').placeholder = isHtoV ? 'e.g. 72' : 'e.g. 400';
+                resetResult('resultA');
+            });
         });
-        
-        // Initialize label on page load
-        updateInputLabel();
 
+        function calcA() {
+            const val = parseFloat(document.getElementById('inputA').value);
+            const box = document.getElementById('resultA');
+            if (isNaN(val)) return showError(box, 'Enter a valid number');
+
+            const mode = document.querySelector('input[name="modeA"]:checked').value;
+            if (mode === 'hToV') {
+                const vol = volFromHeight(val);
+                showResult(box, 'Volume', vol.toFixed(1), 'Liters', 'blue');
+            } else {
+                const ht = heightFromVol(val);
+                showResult(box, 'Height from top', ht.toFixed(1), 'cm', 'blue');
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // TANK D — Vat D (linear model)
+        // ═══════════════════════════════════════
+        const a_coeff = -0.0953, b_coeff = 121.91;
+
+        document.querySelectorAll('input[name="modeD"]').forEach(r => {
+            r.addEventListener('change', () => {
+                const isVtoD = r.value === 'vToD';
+                document.getElementById('labelD').textContent = isVtoD ? 'Volume' : 'Top distance';
+                document.getElementById('unitD').textContent = isVtoD ? 'L' : 'cm';
+                document.getElementById('inputD').value = '';
+                document.getElementById('inputD').placeholder = isVtoD ? 'e.g. 500' : 'e.g. 70';
+                resetResult('resultD');
+            });
+        });
+
+        function calcD() {
+            const val = parseFloat(document.getElementById('inputD').value);
+            const box = document.getElementById('resultD');
+            if (isNaN(val)) return showError(box, 'Enter a valid number');
+
+            const mode = document.querySelector('input[name="modeD"]:checked').value;
+            if (mode === 'vToD') {
+                const dist = a_coeff * val + b_coeff;
+                showResult(box, 'Top distance', dist.toFixed(1), 'cm', 'green');
+            } else {
+                const vol = (val - b_coeff) / a_coeff;
+                showResult(box, 'Volume', vol.toFixed(1), 'Liters', 'green');
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // Shared helpers
+        // ═══════════════════════════════════════
+        function showResult(box, label, value, unit, color) {
+            box.className = `result-box filled ${color}`;
+            box.innerHTML = `
+                <div class="result-label">${label}</div>
+                <div class="result-value ${color}">${value}</div>
+                <div class="result-unit">${unit}</div>`;
+        }
+
+        function showError(box, msg) {
+            box.className = 'result-box error';
+            box.innerHTML = `<div class="result-value error-text">${msg}</div>`;
+        }
+
+        function resetResult(id) {
+            const box = document.getElementById(id);
+            box.className = 'result-box empty';
+            box.innerHTML = '<span class="placeholder-text">Result will appear here</span>';
+        }
+
+        // Allow Enter key to trigger calculation
+        document.getElementById('inputA').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calcA(); } });
+        document.getElementById('inputD').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calcD(); } });
     </script>
 </body>
 </html>
