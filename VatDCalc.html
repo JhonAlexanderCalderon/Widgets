@@ -1,157 +1,344 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vat D Level Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* CSS reset para una mejor integración con Notion */
+        :root {
+            --bg: #0e1117;
+            --surface: #161b22;
+            --surface-hover: #1c2230;
+            --border: #2a3140;
+            --border-focus: #22c55e;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #545d68;
+            --accent-green: #22c55e;
+            --accent-green-dim: rgba(34,197,94,0.12);
+            --radius: 10px;
+            --radius-sm: 6px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: sans-serif;
-            padding: 0;
-            margin: 0;
-            text-align: center;
-            background-color: transparent; /* Fondo transparente para integrarse con Notion */
-            color: #333;
-        }
-        h2 {
-            font-size: 1.5em; /* Ajusta el tamaño del título */
-            margin: 0.5em 0;
-            color: #1a1a1a;
-        }
-        p {
-            font-size: 1em; /* Ajusta el tamaño del texto */
-            margin: 0.5em 0;
-            color: #666;
-        }
-        .options {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 32px 16px;
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
         }
-        label {
-            font-weight: bold;
+
+        .wrapper {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        /* ── Header ── */
+        .page-header {
             display: flex;
             align-items: center;
-            gap: 5px;
-            cursor: pointer;
+            gap: 14px;
+            margin-bottom: 28px;
         }
-        input[type="radio"] {
-            margin: 0;
+        .page-header .icon-badge {
+            width: 42px; height: 42px;
+            background: var(--accent-green-dim);
+            border: 1px solid rgba(34,197,94,0.25);
+            border-radius: var(--radius);
+            display: grid; place-items: center;
+            flex-shrink: 0;
         }
-        .input-group {
-            margin-bottom: 15px;
+        .page-header .icon-badge svg { width: 22px; height: 22px; stroke: var(--accent-green); }
+        .page-header h1 {
+            font-size: 22px; font-weight: 700;
+            letter-spacing: -0.3px;
         }
-        input[type="number"] {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 150px;
+        .page-header span {
+            font-size: 13px; color: var(--text-muted);
+            font-weight: 500;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px 24px;
+        }
+        .card-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .card-label .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            display: inline-block;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.2px;
+        }
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        /* ── Mode Toggle ── */
+        .mode-toggle {
+            display: flex;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+        .mode-toggle input[type="radio"] { display: none; }
+        .mode-toggle label {
+            flex: 1;
             text-align: center;
-        }
-        button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
+            padding: 9px 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-muted);
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
+            border-radius: 5px;
+            transition: color 0.2s, background 0.2s;
+            user-select: none;
         }
-        button:hover {
-            background-color: #0056b3;
+        .mode-toggle input[type="radio"]:checked + label {
+            color: var(--text-primary);
+            background: var(--surface-hover);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
-        #result {
+
+        /* ── Input ── */
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .input-wrap {
+            position: relative;
+            margin-bottom: 18px;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 12px 14px;
+            padding-right: 50px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-wrap input::placeholder {
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 13px;
+        }
+        .input-wrap input:focus { border-color: var(--border-focus); }
+        .input-unit {
+            position: absolute;
+            right: 14px;
+            top: 50%; transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* ── Button ── */
+        .calc-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.08s;
+            color: #fff;
+            letter-spacing: 0.2px;
+            background: var(--accent-green);
+        }
+        .calc-btn:hover { filter: brightness(1.12); }
+        .calc-btn:active { transform: scale(0.985); }
+
+        /* ── Result ── */
+        .result-box {
             margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #28a745;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            min-height: 56px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.25s;
+        }
+        .result-box.empty {
+            background: transparent;
+            border: 1px dashed var(--border);
+        }
+        .result-box.filled {
+            background: var(--accent-green-dim);
+            border: 1px solid rgba(34,197,94,0.2);
+        }
+        .result-box.error {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--accent-green);
+        }
+        .result-value.error-text { color: #ef4444; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+        .result-unit {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .result-box.empty .placeholder-text {
+            font-size: 13px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-    <h2>Vat D Level Calculator</h2>
-    <p>Choose an option below to perform a calculation.</p>
-    
-    <div class="options">
-        <label for="option1">
-            <input type="radio" id="option1" name="calculation_type" value="volume_to_distance" checked onclick="toggleInput('volume_to_distance')">
-            Enter Volume to get Top Distance
-        </label>
-        <label for="option2">
-            <input type="radio" id="option2" name="calculation_type" value="distance_to_volume" onclick="toggleInput('distance_to_volume')">
-            Enter Top distance to get Volume
-        </label>
+    <div class="wrapper">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="icon-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714a2.25 2.25 0 0 0 .659 1.591L19 14.5m-4.75-11.396c.251.023.501.05.75.082M12 3v5.714" />
+                </svg>
+            </div>
+            <h1>Vat D Level</h1>
+            <span>Line 2 · Cold Fill</span>
+        </div>
+
+        <!-- Card -->
+        <div class="card">
+            <div class="card-label"><span class="dot"></span> Tank D</div>
+            <div class="card-title">Vat D Level Calculator</div>
+            <div class="card-desc">Linear model · Volume ↔ Top Distance</div>
+
+            <div class="mode-toggle">
+                <input type="radio" name="mode" id="mode_vd" value="vToD" checked>
+                <label for="mode_vd">Volume → Distance</label>
+                <input type="radio" name="mode" id="mode_dv" value="dToV">
+                <label for="mode_dv">Distance → Volume</label>
+            </div>
+
+            <label class="field-label" id="fieldLabel">Volume</label>
+            <div class="input-wrap">
+                <input type="number" id="inputVal" step="any" placeholder="e.g. 500">
+                <span class="input-unit" id="unitLabel">L</span>
+            </div>
+
+            <button class="calc-btn" onclick="calculate()">Calculate</button>
+
+            <div class="result-box empty" id="resultBox">
+                <span class="placeholder-text">Result will appear here</span>
+            </div>
+        </div>
     </div>
-
-    <div class="input-group" id="volumeInput">
-        <p>Enter the Volume:</p>
-        <input type="number" id="volume" placeholder="e.g., 500">
-    </div>
-
-    <div class="input-group" id="distanceInput" style="display: none;">
-        <p>Enter the Top Distance:</p>
-        <input type="number" id="distance" placeholder="e.g., 20">
-    </div>
-
-    <button onclick="calculate()">Calculate</button>
-
-    <div id="result"></div>
 
     <script>
         const a = -0.0953;
         const b = 121.91;
 
-        function toggleInput(type) {
-            const volumeInput = document.getElementById('volumeInput');
-            const distanceInput = document.getElementById('distanceInput');
-            
-            if (type === 'volume_to_distance') {
-                volumeInput.style.display = 'block';
-                distanceInput.style.display = 'none';
-            } else {
-                volumeInput.style.display = 'none';
-                distanceInput.style.display = 'block';
-            }
-        }
+        document.querySelectorAll('input[name="mode"]').forEach(r => {
+            r.addEventListener('change', () => {
+                const isVtoD = r.value === 'vToD';
+                document.getElementById('fieldLabel').textContent = isVtoD ? 'Volume' : 'Top distance';
+                document.getElementById('unitLabel').textContent = isVtoD ? 'L' : 'cm';
+                document.getElementById('inputVal').value = '';
+                document.getElementById('inputVal').placeholder = isVtoD ? 'e.g. 500' : 'e.g. 70';
+                resetResult();
+            });
+        });
 
         function calculate() {
-            const calcType = document.querySelector('input[name="calculation_type"]:checked').value;
-            let resultDiv = document.getElementById('result');
-            let value;
+            const val = parseFloat(document.getElementById('inputVal').value);
+            const box = document.getElementById('resultBox');
+            if (isNaN(val)) return showError(box, 'Enter a valid number');
 
-            // Clear previous result
-            resultDiv.innerText = '';
-
-            if (calcType === 'volume_to_distance') {
-                value = document.getElementById('volume').value;
-                if (value === "" || isNaN(value)) {
-                    resultDiv.innerText = "Please enter a valid volume.";
-                    resultDiv.style.color = "red";
-                    return;
-                }
-                
-                const distance = a * parseFloat(value) + b;
-                resultDiv.innerText = `The top distance is: ${distance.toFixed(2)}`;
-                resultDiv.style.color = "#28a745";
-
-            } else if (calcType === 'distance_to_volume') {
-                value = document.getElementById('distance').value;
-                if (value === "" || isNaN(value)) {
-                    resultDiv.innerText = "Please enter a valid top distance.";
-                    resultDiv.style.color = "red";
-                    return;
-                }
-
-                // Rearrange the formula: Y = aX + b  =>  X = (Y - b) / a
-                const volume = (parseFloat(value) - b) / a;
-                resultDiv.innerText = `The volume is: ${volume.toFixed(2)}`;
-                resultDiv.style.color = "#28a745";
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            if (mode === 'vToD') {
+                const dist = a * val + b;
+                showResult(box, 'Top distance', dist.toFixed(1), 'cm');
+            } else {
+                const vol = (val - b) / a;
+                showResult(box, 'Volume', vol.toFixed(1), 'Liters');
             }
         }
-    </script>
 
+        function showResult(box, label, value, unit) {
+            box.className = 'result-box filled';
+            box.innerHTML = `
+                <div class="result-label">${label}</div>
+                <div class="result-value">${value}</div>
+                <div class="result-unit">${unit}</div>`;
+        }
+
+        function showError(box, msg) {
+            box.className = 'result-box error';
+            box.innerHTML = `<div class="result-value error-text">${msg}</div>`;
+        }
+
+        function resetResult() {
+            const box = document.getElementById('resultBox');
+            box.className = 'result-box empty';
+            box.innerHTML = '<span class="placeholder-text">Result will appear here</span>';
+        }
+
+        document.getElementById('inputVal').addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); calculate(); }
+        });
+    </script>
 </body>
 </html>
