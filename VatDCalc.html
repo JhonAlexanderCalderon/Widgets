@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Vat D Level Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -15,146 +15,118 @@
             --text-primary: #e6edf3;
             --text-secondary: #8b949e;
             --text-muted: #545d68;
-            --accent-green: #22c55e;
-            --accent-green-dim: rgba(34,197,94,0.12);
-            --radius: 10px;
-            --radius-sm: 6px;
+            --accent: #22c55e;
+            --accent-dim: rgba(34,197,94,0.12);
+            --radius: 14px;
+            --radius-sm: 10px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text-primary);
-            min-height: 100vh;
-            padding: 32px 16px;
+            min-height: 100dvh;
+            padding: 24px 16px;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
         }
 
         .wrapper {
             width: 100%;
-            max-width: 420px;
+            max-width: 460px;
         }
 
-        /* ── Header ── */
         .page-header {
             display: flex;
             align-items: center;
             gap: 14px;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
+            padding: 0 4px;
         }
-        .page-header .icon-badge {
-            width: 42px; height: 42px;
-            background: var(--accent-green-dim);
+        .icon-badge {
+            width: 46px; height: 46px;
+            background: var(--accent-dim);
             border: 1px solid rgba(34,197,94,0.25);
-            border-radius: var(--radius);
+            border-radius: 12px;
             display: grid; place-items: center;
             flex-shrink: 0;
         }
-        .page-header .icon-badge svg { width: 22px; height: 22px; stroke: var(--accent-green); }
-        .page-header h1 {
-            font-size: 22px; font-weight: 700;
+        .icon-badge svg { width: 24px; height: 24px; stroke: var(--accent); }
+        .header-text h1 {
+            font-size: 20px; font-weight: 700;
             letter-spacing: -0.3px;
+            line-height: 1.2;
         }
-        .page-header span {
-            font-size: 13px; color: var(--text-muted);
+        .header-text .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
             font-weight: 500;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin-left: auto;
-            white-space: nowrap;
         }
 
-        /* ── Card ── */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 28px 24px 24px;
-        }
-        .card-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-        .card-label .dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: var(--accent-green);
-            display: inline-block;
-        }
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: -0.2px;
+            padding: 24px 20px;
         }
         .card-desc {
             font-size: 13px;
             color: var(--text-secondary);
-            margin-bottom: 22px;
+            margin-bottom: 24px;
             line-height: 1.5;
         }
 
-        /* ── Mode Toggle ── */
         .mode-toggle {
             display: flex;
             background: var(--bg);
             border-radius: var(--radius-sm);
-            padding: 3px;
-            margin-bottom: 20px;
+            padding: 4px;
+            margin-bottom: 24px;
+            gap: 4px;
         }
         .mode-toggle input[type="radio"] { display: none; }
         .mode-toggle label {
             flex: 1;
             text-align: center;
-            padding: 9px 10px;
-            font-size: 12.5px;
+            padding: 14px 10px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 8px;
             transition: color 0.2s, background 0.2s;
             user-select: none;
         }
         .mode-toggle input[type="radio"]:checked + label {
             color: var(--text-primary);
             background: var(--surface-hover);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.35);
         }
 
-        /* ── Input ── */
         .field-label {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: block;
         }
         .input-wrap {
             position: relative;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
         .input-wrap input {
             width: 100%;
-            padding: 12px 14px;
-            padding-right: 50px;
+            padding: 16px 18px;
+            padding-right: 54px;
             background: var(--bg);
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             border-radius: var(--radius-sm);
             color: var(--text-primary);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 500;
             outline: none;
             transition: border-color 0.2s;
@@ -163,118 +135,114 @@
             color: var(--text-muted);
             font-family: 'DM Sans', sans-serif;
             font-weight: 400;
-            font-size: 13px;
+            font-size: 15px;
         }
         .input-wrap input:focus { border-color: var(--border-focus); }
         .input-unit {
             position: absolute;
-            right: 14px;
+            right: 18px;
             top: 50%; transform: translateY(-50%);
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-muted);
             pointer-events: none;
         }
 
-        /* ── Button ── */
         .calc-btn {
             width: 100%;
-            padding: 12px;
+            padding: 16px;
             border: none;
             border-radius: var(--radius-sm);
             font-family: 'DM Sans', sans-serif;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: filter 0.2s, transform 0.08s;
             color: #fff;
             letter-spacing: 0.2px;
-            background: var(--accent-green);
+            background: var(--accent);
         }
         .calc-btn:hover { filter: brightness(1.12); }
-        .calc-btn:active { transform: scale(0.985); }
+        .calc-btn:active { transform: scale(0.98); }
 
-        /* ── Result ── */
         .result-box {
-            margin-top: 20px;
-            padding: 16px;
+            margin-top: 24px;
+            padding: 22px 16px;
             border-radius: var(--radius-sm);
             text-align: center;
-            min-height: 56px;
+            min-height: 70px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.25s;
         }
         .result-box.empty {
             background: transparent;
-            border: 1px dashed var(--border);
+            border: 1.5px dashed var(--border);
         }
         .result-box.filled {
-            background: var(--accent-green-dim);
-            border: 1px solid rgba(34,197,94,0.2);
+            background: var(--accent-dim);
+            border: 1.5px solid rgba(34,197,94,0.2);
         }
         .result-box.error {
             background: rgba(239,68,68,0.08);
-            border: 1px solid rgba(239,68,68,0.2);
+            border: 1.5px solid rgba(239,68,68,0.2);
         }
         .result-label {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .result-value {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 26px;
+            font-size: 32px;
             font-weight: 600;
             letter-spacing: -0.5px;
-            color: var(--accent-green);
+            color: var(--accent);
         }
-        .result-value.error-text { color: #ef4444; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+        .result-value.error-text { color: #ef4444; font-size: 15px; font-family: 'DM Sans', sans-serif; }
         .result-unit {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-secondary);
             font-weight: 500;
+            margin-top: 2px;
         }
         .result-box.empty .placeholder-text {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-muted);
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 48px 24px; align-items: center; }
+            .card { padding: 32px 28px; }
         }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
-        <!-- Header -->
         <div class="page-header">
             <div class="icon-badge">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-                    <!-- Tank body -->
                     <rect x="5" y="6" width="14" height="12" rx="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Tank top dome -->
                     <path d="M5 8c0-2.5 3.134-4 7-4s7 1.5 7 4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Tank legs -->
                     <line x1="7" y1="18" x2="7" y2="21" stroke-linecap="round"/>
                     <line x1="17" y1="18" x2="17" y2="21" stroke-linecap="round"/>
-                    <!-- Liquid level line -->
                     <line x1="7" y1="13" x2="17" y2="13" stroke-linecap="round" stroke-dasharray="2 2"/>
-                    <!-- Top pipe -->
                     <line x1="12" y1="2" x2="12" y2="4" stroke-linecap="round"/>
                 </svg>
             </div>
-            <h1>Vat D Level</h1>
-            <span>Line 2 · Cold Fill</span>
+            <div class="header-text">
+                <h1>Vat D Level</h1>
+                <div class="subtitle">Linear model calculation</div>
+            </div>
         </div>
 
-        <!-- Card -->
         <div class="card">
-            <div class="card-label"><span class="dot"></span> Tank D</div>
-            <div class="card-title">Vat D Level Calculator</div>
-            <div class="card-desc">Linear model · Volume ↔ Top Distance</div>
+            <div class="card-desc">Convert between volume (Liters) and top distance (cm).</div>
 
             <div class="mode-toggle">
                 <input type="radio" name="mode" id="mode_vd" value="vToD" checked>
@@ -285,7 +253,7 @@
 
             <label class="field-label" id="fieldLabel">Volume</label>
             <div class="input-wrap">
-                <input type="number" id="inputVal" step="any" placeholder="e.g. 500">
+                <input type="number" id="inputVal" inputmode="decimal" step="any" placeholder="e.g. 500">
                 <span class="input-unit" id="unitLabel">L</span>
             </div>
 
