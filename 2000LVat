@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>2000L Vat Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e1117;
+            --surface: #161b22;
+            --surface-hover: #1c2230;
+            --border: #2a3140;
+            --border-focus: #f59e0b;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #545d68;
+            --accent: #f59e0b;
+            --accent-dim: rgba(245,158,11,0.12);
+            --radius: 14px;
+            --radius-sm: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100dvh;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding: 0 4px;
+        }
+        .icon-badge {
+            width: 46px; height: 46px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 12px;
+            display: grid; place-items: center;
+            flex-shrink: 0;
+        }
+        .icon-badge svg { width: 24px; height: 24px; stroke: var(--accent); }
+        .header-text h1 {
+            font-size: 20px; font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+        .header-text .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+        }
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .mode-toggle {
+            display: flex;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 24px;
+            gap: 4px;
+        }
+        .mode-toggle input[type="radio"] { display: none; }
+        .mode-toggle label {
+            flex: 1;
+            text-align: center;
+            padding: 14px 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: color 0.2s, background 0.2s;
+            user-select: none;
+        }
+        .mode-toggle input[type="radio"]:checked + label {
+            color: var(--text-primary);
+            background: var(--surface-hover);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+        }
+
+        .field-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+        .input-wrap {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 16px 18px;
+            padding-right: 54px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-wrap input::placeholder {
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 15px;
+        }
+        .input-wrap input:focus { border-color: var(--border-focus); }
+        .input-unit {
+            position: absolute;
+            right: 18px;
+            top: 50%; transform: translateY(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .calc-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.08s;
+            color: #fff;
+            letter-spacing: 0.2px;
+            background: var(--accent);
+        }
+        .calc-btn:hover { filter: brightness(1.12); }
+        .calc-btn:active { transform: scale(0.98); }
+
+        .result-box {
+            margin-top: 24px;
+            padding: 22px 16px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .result-box.empty {
+            background: transparent;
+            border: 1.5px dashed var(--border);
+        }
+        .result-box.filled {
+            background: var(--accent-dim);
+            border: 1.5px solid rgba(245,158,11,0.2);
+        }
+        .result-box.error {
+            background: rgba(239,68,68,0.08);
+            border: 1.5px solid rgba(239,68,68,0.2);
+        }
+        .result-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--accent);
+        }
+        .result-value.error-text { color: #ef4444; font-size: 15px; font-family: 'DM Sans', sans-serif; }
+        .result-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        .result-box.empty .placeholder-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 48px 24px; align-items: center; }
+            .card { padding: 32px 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="page-header">
+            <div class="icon-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                    <rect x="5" y="6" width="14" height="12" rx="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 8c0-2.5 3.134-4 7-4s7 1.5 7 4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="7" y1="18" x2="7" y2="21" stroke-linecap="round"/>
+                    <line x1="17" y1="18" x2="17" y2="21" stroke-linecap="round"/>
+                    <line x1="7" y1="13" x2="17" y2="13" stroke-linecap="round" stroke-dasharray="2 2"/>
+                    <line x1="12" y1="2" x2="12" y2="4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="header-text">
+                <h1>2000 Litres Vat</h1>
+                <div class="subtitle">Lookup table interpolation</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-desc">Convert between height (cm from top) and volume (Liters).</div>
+
+            <div class="mode-toggle">
+                <input type="radio" name="mode" id="mode_hv" value="hToV" checked>
+                <label for="mode_hv">Height → Volume</label>
+                <input type="radio" name="mode" id="mode_vh" value="vToH">
+                <label for="mode_vh">Volume → Height</label>
+            </div>
+
+            <label class="field-label" id="fieldLabel">Height from top</label>
+            <div class="input-wrap">
+                <input type="number" id="inputVal" inputmode="decimal" step="any" placeholder="e.g. 107">
+                <span class="input-unit" id="unitLabel">cm</span>
+            </div>
+
+            <button class="calc-btn" onclick="calculate()">Calculate</button>
+
+            <div class="result-box empty" id="resultBox">
+                <span class="placeholder-text">Result will appear here</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Shallow Side table (10-1200L) + measured data (1400-2000L) ──
+        const tankData = [
+            { v: 10,   h: 141.19 }, { v: 20,   h: 141.19 }, { v: 30,   h: 140.59 },
+            { v: 40,   h: 139.98 }, { v: 50,   h: 139.38 }, { v: 60,   h: 138.78 },
+            { v: 70,   h: 138.17 }, { v: 80,   h: 137.57 }, { v: 90,   h: 136.96 },
+            { v: 100,  h: 136.36 }, { v: 110,  h: 135.76 }, { v: 120,  h: 135.15 },
+            { v: 130,  h: 134.55 }, { v: 140,  h: 133.94 }, { v: 150,  h: 133.34 },
+            { v: 160,  h: 132.73 }, { v: 170,  h: 132.13 }, { v: 180,  h: 131.53 },
+            { v: 190,  h: 130.92 }, { v: 200,  h: 130.32 }, { v: 210,  h: 129.71 },
+            { v: 220,  h: 129.11 }, { v: 230,  h: 128.51 }, { v: 240,  h: 127.90 },
+            { v: 250,  h: 127.30 }, { v: 260,  h: 126.69 }, { v: 270,  h: 126.09 },
+            { v: 280,  h: 125.49 }, { v: 290,  h: 124.88 }, { v: 300,  h: 124.28 },
+            { v: 310,  h: 123.67 }, { v: 320,  h: 123.07 }, { v: 330,  h: 122.47 },
+            { v: 340,  h: 121.86 }, { v: 350,  h: 121.26 }, { v: 360,  h: 120.65 },
+            { v: 370,  h: 120.05 }, { v: 380,  h: 119.44 }, { v: 390,  h: 118.84 },
+            { v: 400,  h: 118.24 }, { v: 410,  h: 117.63 }, { v: 420,  h: 117.03 },
+            { v: 430,  h: 116.42 }, { v: 440,  h: 115.82 }, { v: 450,  h: 115.22 },
+            { v: 460,  h: 114.61 }, { v: 470,  h: 114.01 }, { v: 480,  h: 113.40 },
+            { v: 490,  h: 112.80 }, { v: 500,  h: 112.20 }, { v: 510,  h: 111.59 },
+            { v: 520,  h: 110.99 }, { v: 530,  h: 110.38 }, { v: 540,  h: 109.78 },
+            { v: 550,  h: 109.18 }, { v: 560,  h: 108.57 }, { v: 570,  h: 107.97 },
+            { v: 580,  h: 107.36 }, { v: 590,  h: 106.76 }, { v: 600,  h: 106.15 },
+            { v: 610,  h: 105.55 }, { v: 620,  h: 104.95 }, { v: 630,  h: 104.34 },
+            { v: 640,  h: 103.74 }, { v: 650,  h: 103.13 }, { v: 660,  h: 102.53 },
+            { v: 670,  h: 101.93 }, { v: 680,  h: 101.32 }, { v: 690,  h: 100.72 },
+            { v: 700,  h: 100.11 }, { v: 710,  h: 99.51  }, { v: 720,  h: 98.91  },
+            { v: 730,  h: 98.30  }, { v: 740,  h: 97.70  }, { v: 750,  h: 97.09  },
+            { v: 760,  h: 96.49  }, { v: 770,  h: 95.89  }, { v: 780,  h: 95.28  },
+            { v: 790,  h: 94.68  }, { v: 800,  h: 94.07  }, { v: 810,  h: 93.47  },
+            { v: 820,  h: 92.86  }, { v: 830,  h: 92.26  }, { v: 840,  h: 91.66  },
+            { v: 850,  h: 91.05  }, { v: 860,  h: 90.45  }, { v: 870,  h: 89.84  },
+            { v: 880,  h: 89.24  }, { v: 890,  h: 88.64  }, { v: 900,  h: 88.03  },
+            { v: 910,  h: 87.43  }, { v: 920,  h: 86.82  }, { v: 930,  h: 86.22  },
+            { v: 940,  h: 85.62  }, { v: 950,  h: 85.01  }, { v: 960,  h: 84.41  },
+            { v: 970,  h: 83.80  }, { v: 980,  h: 83.20  }, { v: 990,  h: 82.60  },
+            { v: 1000, h: 81.99  }, { v: 1010, h: 81.39  }, { v: 1020, h: 80.78  },
+            { v: 1030, h: 80.18  }, { v: 1040, h: 79.57  }, { v: 1050, h: 78.97  },
+            { v: 1060, h: 78.37  }, { v: 1070, h: 77.76  }, { v: 1080, h: 77.16  },
+            { v: 1090, h: 76.55  }, { v: 1100, h: 75.95  }, { v: 1110, h: 75.35  },
+            { v: 1120, h: 74.74  }, { v: 1130, h: 74.14  }, { v: 1140, h: 73.53  },
+            { v: 1150, h: 72.93  }, { v: 1160, h: 72.33  }, { v: 1170, h: 71.72  },
+            { v: 1180, h: 71.12  }, { v: 1190, h: 70.51  }, { v: 1200, h: 69.91  },
+            { v: 1400, h: 56.5  },
+            { v: 1600, h: 46    },
+            { v: 1800, h: 34    },
+            { v: 2000, h: 22    }
+        ];
+
+        function volumeFromHeight(h) {
+            const byHeight = [...tankData].sort((a, b) => b.h - a.h);
+            if (h >= byHeight[0].h) return byHeight[0].v;
+            if (h <= byHeight[byHeight.length - 1].h) return byHeight[byHeight.length - 1].v;
+            for (let i = 0; i < byHeight.length - 1; i++) {
+                const p1 = byHeight[i], p2 = byHeight[i + 1];
+                if (h <= p1.h && h >= p2.h) {
+                    const ratio = (h - p1.h) / (p2.h - p1.h);
+                    return p1.v + ratio * (p2.v - p1.v);
+                }
+            }
+            return null;
+        }
+
+        function heightFromVolume(v) {
+            if (v <= tankData[0].v) return tankData[0].h;
+            if (v >= tankData[tankData.length - 1].v) return tankData[tankData.length - 1].h;
+            for (let i = 0; i < tankData.length - 1; i++) {
+                const p1 = tankData[i], p2 = tankData[i + 1];
+                if (v >= p1.v && v <= p2.v) {
+                    const ratio = (v - p1.v) / (p2.v - p1.v);
+                    return p1.h + ratio * (p2.h - p1.h);
+                }
+            }
+            return null;
+        }
+
+        document.querySelectorAll('input[name="mode"]').forEach(r => {
+            r.addEventListener('change', () => {
+                const isHtoV = r.value === 'hToV';
+                document.getElementById('fieldLabel').textContent = isHtoV ? 'Height from top' : 'Volume';
+                document.getElementById('unitLabel').textContent = isHtoV ? 'cm' : 'L';
+                document.getElementById('inputVal').value = '';
+                document.getElementById('inputVal').placeholder = isHtoV ? 'e.g. 107' : 'e.g. 600';
+                resetResult();
+            });
+        });
+
+        function calculate() {
+            const val = parseFloat(document.getElementById('inputVal').value);
+            const box = document.getElementById('resultBox');
+            if (isNaN(val)) return showError(box, 'Enter a valid number');
+
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            if (mode === 'hToV') {
+                const vol = volumeFromHeight(val);
+                if (vol === null) return showError(box, 'Value out of range');
+                showResult(box, 'Volume', vol.toFixed(1), 'Liters');
+            } else {
+                const ht = heightFromVolume(val);
+                if (ht === null) return showError(box, 'Value out of range');
+                showResult(box, 'Height from top', ht.toFixed(1), 'cm');
+            }
+        }
+
+        function showResult(box, label, value, unit) {
+            box.className = 'result-box filled';
+            box.innerHTML = `
+                <div class="result-label">${label}</div>
+                <div class="result-value">${value}</div>
+                <div class="result-unit">${unit}</div>`;
+        }
+
+        function showError(box, msg) {
+            box.className = 'result-box error';
+            box.innerHTML = `<div class="result-value error-text">${msg}</div>`;
+        }
+
+        function resetResult() {
+            const box = document.getElementById('resultBox');
+            box.className = 'result-box empty';
+            box.innerHTML = '<span class="placeholder-text">Result will appear here</span>';
+        }
+
+        document.getElementById('inputVal').addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); calculate(); }
+        });
+    </script>
+</body>
+</html>
